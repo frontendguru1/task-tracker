@@ -18,7 +18,7 @@ body {margin:0; padding: 0; font-family: 'Roboto', sans-serif;}
 }
 
 .create-task {
-    min-width: calc(40% - 25px);
+    min-width: 40%;
     padding-right: 25px;
 }
 
@@ -52,7 +52,14 @@ body {margin:0; padding: 0; font-family: 'Roboto', sans-serif;}
     border: 0;
     border-radius: 3px;
     color: #fff;
+    cursor: pointer;
 }
+
+.form-container button:hover {
+    background: #ffa303;
+}
+
+
 .section-head {
     font-weight: 700;
     font-size: 18px;
@@ -69,25 +76,92 @@ body {margin:0; padding: 0; font-family: 'Roboto', sans-serif;}
 }
 
 .task-list {
-    min-width: calc(60% - 25px);
+    min-width: 60%;
     padding-left: 30px;
     border-left: 1px solid #ddd;
 }
 
 .tasklist-indent {
     border: 1px solid #ddd;
+    max-height: 340px;
+    overflow-y: auto;
 }
 
 .tasklist-row {
     display: flex;
     padding: 12px;
+    animation: opacity 1.5s;
+}
+
+.tasklist-row:hover {
+    opacity: .9;
+}
+
+.tasklist-row:nth-child(even) {
+    background: rgba(222,222,222,.5);
 }
 
 
 .col {
-    padding: 0 0 0 25px;
+    padding: 0 0 0 35px;
+    font-size: 13px;
+    color: #333;
+}
+
+.col:first-child {
+    padding-left: 0;
 }
 
 .col span {
+    display: block;
+    font-size: 14px;
+    color: #000;
+}
+
+.col div {
+    font-weight: 600;
+    font-size: 12px;
+    color: #666;
+    padding: 0 0 2px 0;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+.remove {
+    display: inline-block;
+    background: rgb(231, 151, 3);
+    font-size: 12px;
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 4px;
+    line-height: 100%;
+    height: 22px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.remove:hover {
+    background: #ffa303;
+}
+
+.form-error {
+    font-size: 14px;
     font-weight: 700;
+    color: #ff0000;
+    padding: 0 0 15px 0;
+}
+
+.no-task {
+    display: flex;
+    background: #f2f2f2;
+    align-items: center;
+    justify-content: center;
+    height: 266px;
+    color: #ccc;
+    animation: opacity 1s;
+}
+
+@keyframes opacity {
+    from {opacity: 0;}
+    to {opacity: 1;}
 }
