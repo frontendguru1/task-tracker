@@ -2,8 +2,6 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -31,19 +29,52 @@ var TaskList = function (_React$Component) {
     }
 
     _createClass(TaskList, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            //Render Data
+            this.getDataFromLocalStorage();
+        }
+
+        //Get Data From Localstorage
+
+    }, {
+        key: 'getDataFromLocalStorage',
+        value: function getDataFromLocalStorage() {
+            try {
+                var getLocalstorageData = JSON.parse(localStorage.getItem('taskList'));
+                if (getLocalstorageData) {
+                    this.setState(function () {
+                        return {
+                            taskListData: getLocalstorageData,
+                            showFormError: false
+                        };
+                    });
+                    console.log(this.state);
+                }
+            } catch (e) {}
+        }
+
+        //remove task
+
+    }, {
         key: 'handleRemoveTask',
         value: function handleRemoveTask(option) {
-            // this.setState((prevstate)=> ({
-            //     taskListData: prevstate.taskListData.filter((el)=>{
-            //         console.log(el !== option)
-            //         return el !== option
-            //     })
-            // }))
+            try {
+                var getLocalstorageData = JSON.parse(localStorage.getItem('taskList'));
+                if (getLocalstorageData) {
+                    var filterData = getLocalstorageData.filter(function (el) {
+                        return el.taskName !== option;
+                    });
 
-            var array = [].concat(_toConsumableArray(this.state.taskListData));
-            var index = array.indexOf(option.target.value);
-            array.splice(index, 1);
-            this.setState({ taskListData: array });
+                    localStorage.setItem('taskList', JSON.stringify(filterData));
+                    var data = JSON.parse(localStorage.getItem('taskList'));
+                    this.setState(function () {
+                        return {
+                            taskListData: data
+                        };
+                    });
+                }
+            } catch (e) {}
         }
     }, {
         key: 'handleAddTask',
@@ -58,12 +89,9 @@ var TaskList = function (_React$Component) {
             formvalues.assignedTo = assignedname;
 
             if (!taskname == '' && !taskdate == '' && !assignedname == '') {
-                this.setState(function (prevstate) {
-                    return {
-                        taskListData: prevstate.taskListData.concat(formvalues),
-                        showFormError: false
-                    };
-                });
+                var getPreviousData = this.state.taskListData.concat(formvalues);
+                localStorage.setItem('taskList', JSON.stringify(getPreviousData));
+                this.getDataFromLocalStorage();
 
                 e.target.elements.taskName.value = '';
                 e.target.elements.taskDate.value = '';
@@ -245,6 +273,8 @@ var TaskListRow = function (_React$Component5) {
     _createClass(TaskListRow, [{
         key: 'render',
         value: function render() {
+            var _this7 = this;
+
             return React.createElement(
                 'div',
                 { className: 'tasklist-row' },
@@ -280,7 +310,9 @@ var TaskListRow = function (_React$Component5) {
                 ),
                 React.createElement(
                     'div',
-                    { className: 'remove', onClick: this.props.handleRemoveTask },
+                    { className: 'remove', onClick: function onClick() {
+                            return _this7.props.handleRemoveTask(_this7.props.taskName);
+                        } },
                     'Remove'
                 )
             );

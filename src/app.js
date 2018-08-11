@@ -13,18 +13,49 @@ class TaskList extends React.Component {
 
     }
 
-    handleRemoveTask(option) {
-        // this.setState((prevstate)=> ({
-        //     taskListData: prevstate.taskListData.filter((el)=>{
-        //         console.log(el !== option)
-        //         return el !== option
-        //     })
-        // }))
+    componentDidMount() {
+        //Render Data
+        this.getDataFromLocalStorage()
+    }
 
-        var array = [...this.state.taskListData];
-        var index = array.indexOf(option.target.value)
-        array.splice(index, 1);
-        this.setState({taskListData: array});
+    //Get Data From Localstorage
+    getDataFromLocalStorage() {
+        try {
+            const getLocalstorageData =  JSON.parse(localStorage.getItem('taskList'))
+            if(getLocalstorageData) {
+                this.setState(()=>{
+                    return {
+                        taskListData: getLocalstorageData,
+                        showFormError: false
+                    }
+                });
+                console.log(this.state)
+            }
+        }
+        catch(e) {
+
+        }
+    }
+
+    //remove task
+    handleRemoveTask(option) {
+        try {
+            const getLocalstorageData =  JSON.parse(localStorage.getItem('taskList'))
+            if(getLocalstorageData) {
+                const filterData = getLocalstorageData.filter((el)=>{
+                    return el.taskName !== option
+                })
+
+                localStorage.setItem('taskList', JSON.stringify(filterData))
+                const data = JSON.parse(localStorage.getItem('taskList'))
+                this.setState(()=> ({
+                    taskListData: data
+                }))
+            }
+        }
+        catch(e) {
+
+        }
     }
 
     handleAddTask(e) {
@@ -37,13 +68,11 @@ class TaskList extends React.Component {
         formvalues.date = taskdate
         formvalues.assignedTo = assignedname
 
+
         if(!taskname == '' && !taskdate == '' && !assignedname == '') {
-            this.setState((prevstate)=>{
-                return {
-                    taskListData: prevstate.taskListData.concat(formvalues),
-                    showFormError: false
-                }
-            });
+            const getPreviousData = this.state.taskListData.concat(formvalues)
+            localStorage.setItem('taskList', JSON.stringify(getPreviousData))
+            this.getDataFromLocalStorage()
 
             e.target.elements.taskName.value = ''
             e.target.elements.taskDate.value = ''
@@ -157,7 +186,7 @@ class TaskListRow extends React.Component {
                     {this.props.assignedTo}
                 </div>
 
-                <div className={'remove'} onClick={this.props.handleRemoveTask}>
+                <div className={'remove'} onClick={()=>this.props.handleRemoveTask(this.props.taskName)}>
                     Remove
                 </div>
             </div>
