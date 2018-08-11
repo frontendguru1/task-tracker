@@ -5,7 +5,8 @@ class TaskList extends React.Component {
         super(props)
         this.state = {
             taskListData: [],
-            showFormError: false
+            showFormError: false,
+            showErrorExistsTask: false,
         }
 
         this.handleAddTask = this.handleAddTask.bind(this)
@@ -29,7 +30,6 @@ class TaskList extends React.Component {
                         showFormError: false
                     }
                 });
-                console.log(this.state)
             }
         }
         catch(e) {
@@ -69,14 +69,25 @@ class TaskList extends React.Component {
         formvalues.assignedTo = assignedname
 
 
-        if(!taskname == '' && !taskdate == '' && !assignedname == '') {
-            const getPreviousData = this.state.taskListData.concat(formvalues)
-            localStorage.setItem('taskList', JSON.stringify(getPreviousData))
-            this.getDataFromLocalStorage()
+        if(taskname !== '' && taskdate !== '' && assignedname !== '') {
 
-            e.target.elements.taskName.value = ''
-            e.target.elements.taskDate.value = ''
-            e.target.elements.assignedName.value = ''
+            const fetchLocalStorage =  localStorage.getItem('taskList')
+            const checkIfValueExists = fetchLocalStorage.includes(formvalues.taskName);
+            if(checkIfValueExists) {
+                this.setState(()=>{
+                    return {
+                        showErrorExistsTask: true
+                    }
+                })
+            }
+            else {
+                const getPreviousData = this.state.taskListData.concat(formvalues)
+                localStorage.setItem('taskList', JSON.stringify(getPreviousData))
+                this.getDataFromLocalStorage()
+                e.target.elements.taskName.value = ''
+                e.target.elements.taskDate.value = ''
+                e.target.elements.assignedName.value = ''
+            }
 
         }else {
             this.setState(()=>{
@@ -89,6 +100,7 @@ class TaskList extends React.Component {
 
     render() {
         const formError = this.state.showFormError
+        const showErrorExistsTask  = this.state.showErrorExistsTask
         const showAddTaskMsg = this.state.taskListData
         const checkTaskLength = showAddTaskMsg.length
 
@@ -104,6 +116,8 @@ class TaskList extends React.Component {
                                 <Formfield label={'Date'} fieldtype={'date'} placeholder={'Please select date'} name={'taskDate'}  />
                                 <Formfield label={'Assigned to'} fieldtype={'text'} placeholder={'Please enter name'} name={'assignedName'}  />
                                 {formError && <div className={'form-error'}>Please fill all the form fields</div>}
+                                {showErrorExistsTask && <div className={'form-error'}>This task already exists</div>}
+
                                 <button type={'submit'}>Submit</button>
                             </form>
                         </div>

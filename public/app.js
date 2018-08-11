@@ -19,7 +19,8 @@ var TaskList = function (_React$Component) {
 
         _this.state = {
             taskListData: [],
-            showFormError: false
+            showFormError: false,
+            showErrorExistsTask: false
         };
 
         _this.handleAddTask = _this.handleAddTask.bind(_this);
@@ -49,7 +50,6 @@ var TaskList = function (_React$Component) {
                             showFormError: false
                         };
                     });
-                    console.log(this.state);
                 }
             } catch (e) {}
         }
@@ -88,14 +88,24 @@ var TaskList = function (_React$Component) {
             formvalues.date = taskdate;
             formvalues.assignedTo = assignedname;
 
-            if (!taskname == '' && !taskdate == '' && !assignedname == '') {
-                var getPreviousData = this.state.taskListData.concat(formvalues);
-                localStorage.setItem('taskList', JSON.stringify(getPreviousData));
-                this.getDataFromLocalStorage();
+            if (taskname !== '' && taskdate !== '' && assignedname !== '') {
 
-                e.target.elements.taskName.value = '';
-                e.target.elements.taskDate.value = '';
-                e.target.elements.assignedName.value = '';
+                var fetchLocalStorage = localStorage.getItem('taskList');
+                var checkIfValueExists = fetchLocalStorage.includes(formvalues.taskName);
+                if (checkIfValueExists) {
+                    this.setState(function () {
+                        return {
+                            showErrorExistsTask: true
+                        };
+                    });
+                } else {
+                    var getPreviousData = this.state.taskListData.concat(formvalues);
+                    localStorage.setItem('taskList', JSON.stringify(getPreviousData));
+                    this.getDataFromLocalStorage();
+                    e.target.elements.taskName.value = '';
+                    e.target.elements.taskDate.value = '';
+                    e.target.elements.assignedName.value = '';
+                }
             } else {
                 this.setState(function () {
                     return {
@@ -108,6 +118,7 @@ var TaskList = function (_React$Component) {
         key: 'render',
         value: function render() {
             var formError = this.state.showFormError;
+            var showErrorExistsTask = this.state.showErrorExistsTask;
             var showAddTaskMsg = this.state.taskListData;
             var checkTaskLength = showAddTaskMsg.length;
 
@@ -135,6 +146,11 @@ var TaskList = function (_React$Component) {
                                     'div',
                                     { className: 'form-error' },
                                     'Please fill all the form fields'
+                                ),
+                                showErrorExistsTask && React.createElement(
+                                    'div',
+                                    { className: 'form-error' },
+                                    'This task already exists'
                                 ),
                                 React.createElement(
                                     'button',
