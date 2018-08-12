@@ -89,7 +89,6 @@ var TaskList = function (_React$Component) {
             formvalues.assignedTo = assignedname;
 
             if (taskname !== '' && taskdate !== '' && assignedname !== '') {
-
                 var fetchLocalStorage = localStorage.getItem('taskList');
                 var checkIfValueExists = fetchLocalStorage.includes(formvalues.taskName);
                 if (checkIfValueExists) {
@@ -105,6 +104,11 @@ var TaskList = function (_React$Component) {
                     e.target.elements.taskName.value = '';
                     e.target.elements.taskDate.value = '';
                     e.target.elements.assignedName.value = '';
+                    this.setState(function () {
+                        return {
+                            showErrorExistsTask: false
+                        };
+                    });
                 }
             } else {
                 this.setState(function () {

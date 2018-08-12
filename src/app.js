@@ -1,3 +1,5 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 // parent component:- TaskList
 class TaskList extends React.Component {
@@ -18,7 +20,6 @@ class TaskList extends React.Component {
         //Render Data
         this.getDataFromLocalStorage()
     }
-
     //Get Data From Localstorage
     getDataFromLocalStorage() {
         try {
@@ -70,7 +71,6 @@ class TaskList extends React.Component {
 
 
         if(taskname !== '' && taskdate !== '' && assignedname !== '') {
-
             const fetchLocalStorage =  localStorage.getItem('taskList')
             const checkIfValueExists = fetchLocalStorage.includes(formvalues.taskName);
             if(checkIfValueExists) {
@@ -80,6 +80,7 @@ class TaskList extends React.Component {
                     }
                 })
             }
+
             else {
                 const getPreviousData = this.state.taskListData.concat(formvalues)
                 localStorage.setItem('taskList', JSON.stringify(getPreviousData))
@@ -87,6 +88,11 @@ class TaskList extends React.Component {
                 e.target.elements.taskName.value = ''
                 e.target.elements.taskDate.value = ''
                 e.target.elements.assignedName.value = ''
+                this.setState(()=>{
+                    return {
+                        showErrorExistsTask: false
+                    }
+                })
             }
 
         }else {
