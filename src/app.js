@@ -1,9 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import Head from './Head'
+import Formfield from './FormFields'
+import TaskListContainer from './TaskListContainer'
 
-// parent component:- TaskList
 class TaskList extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
             taskListData: [],
@@ -69,18 +71,18 @@ class TaskList extends React.Component {
         formvalues.date = taskdate
         formvalues.assignedTo = assignedname
 
-
         if(taskname !== '' && taskdate !== '' && assignedname !== '') {
             const fetchLocalStorage =  localStorage.getItem('taskList')
-            const checkIfValueExists = fetchLocalStorage.includes(formvalues.taskName);
+            const checkIfValueExists = fetchLocalStorage ? fetchLocalStorage.includes(formvalues.taskName) : ''
+            console.log(checkIfValueExists, 'test')
+
             if(checkIfValueExists) {
                 this.setState(()=>{
                     return {
                         showErrorExistsTask: true
                     }
-                })
+                })                
             }
-
             else {
                 const getPreviousData = this.state.taskListData.concat(formvalues)
                 localStorage.setItem('taskList', JSON.stringify(getPreviousData))
@@ -140,79 +142,8 @@ class TaskList extends React.Component {
     }
 }
 
-// Head component
-class Head extends React.Component {
-    render() {
-        const headClass = this.props.headClass
-        return (
-            <div className={headClass}>
-                {this.props.title}
-            </div>
-        )
-    }
-}
 
-//FormField Component
-class Formfield extends React.Component {
-    render() {
 
-        return (
-            <div className={'field-row'}>
-                <label>{this.props.label}</label>
-                <input type={this.props.fieldtype} className={'form-control'} name={this.props.name} placeholder={this.props.placeholder} />
-            </div>
-        )
-    }
-}
-
-//TaskList Component
-class TaskListContainer extends React.Component {
-    render() {
-        return (
-            <div className={'tasklist-indent'}>
-                {
-                    this.props.taskListContent.map((data, index)=>{
-                        return <TaskListRow
-                            key={index}
-                            taskName={data.taskName}
-                            assignedDate={data.date}
-                            assignedTo={data.assignedTo}
-                            handleRemoveTask={this.props.handleRemoveTask}
-                        />
-                    })
-                }
-            </div>
-        )
-    }
-}
-
-//TasListRow Component
-class TaskListRow extends React.Component {
-    render() {
-        return (
-            <div className={'tasklist-row'}>
-                <div className={'col'}>
-                    <div>Task Name</div>
-                        {this.props.taskName}
-                </div>
-
-                <div className={'col'}>
-                    <div>Assigned Date</div>
-                    {this.props.assignedDate}
-                </div>
-
-                <div className={'col'}>
-                    <div>Assigned to</div>
-                    {this.props.assignedTo}
-                </div>
-
-                <div className={'remove'} onClick={()=>this.props.handleRemoveTask(this.props.taskName)}>
-                    Remove
-                </div>
-            </div>
-        )
-    }
-}
 
 
 //Init app
